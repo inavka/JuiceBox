@@ -2,102 +2,62 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace JuiceBox
+namespace JuiceBoxProgramm
 { 
-    class JuiceBox : IEnumerable, ICountable
+    class JuiceBox : IEnumerable, ICountable 
     {
-       
+        //Alle Saefte werden in einem Feld gespeichert
+        private Juice [] data;
 
-        Juice first = null, last = null;
-
-        int count = 0;
         public JuiceBox() { }
+
+        /// <summary>
+        /// Konstruktor um ein Box bestimmter Groesse anzulegen
+        /// </summary>
+        /// <param name="n">Groesse des Boxes</param>
         public JuiceBox(int n = 0)
         {
-            for (int i = 0; i < n; i++)
-            {
-                Add();
-            }
+            data = new Juice[n];
         }
-
-        public void Add()
-        {
-            Juice newItem = new Juice();   // 1. Neues Element anlegen
-            count++;
-            if (first == null)                            // 2. Leere Liste?
-                first = last = newItem;
-            else
-            {
-                last.next = newItem;               // 3. Neues Element am Ende anfügen
-                last = last.next;
-            }
-        }
-
-        private Juice NthElem(int index)
-        {
-            if (index < 0 || index >= count)
-                throw new IndexOutOfRangeException("Boxindex außerhalb des gültigen Bereichs");
-            Juice item = first;
-            while (index > 0)
-            {
-                item = item.next;
-                index--;
-            }
-            return item;
-        }
-
-
+        /// <summary>
+        /// Indexer
+        /// </summary>
+        /// <param name="n">Index des Elements im Feld</param>
+        /// <returns></returns>
         public Juice this[int n]
         {
             get
             {
-                return NthElem(n);
+                return data[n];
             }
             set
             {
-                Juice nthBox = NthElem(n);
-                nthBox.name = value.name;
-                nthBox.preis = value.preis;
+                data[n] = value;
             }
         }
+        /// <summary>
+        /// Sortiert die Liste absteigend
+        /// </summary>
         public void Sort()
         {
-
-            if (first == null)
-                throw new ArgumentNullException("Die JuiceBox ist leer");
-
-            
-            for (Juice tmp = first; tmp != null; tmp = tmp.next)
-            {
-                if (tmp.CompareTo(first) < 0)
-                {
-                    tmp.next = first;
-                    first = tmp;
-                }
-
-                //else
-                //{
-                //    for (Juice biggerPrice = first.next; biggerPrice != null; biggerPrice = biggerPrice.next)
-                //    {
-                //        if (biggerPrice.CompareTo(tmp) < 0)
-                //        {
-                //            biggerPrice.next = tmp.next;
-                //            tmp.next = biggerPrice;
-                //        }
-                //    }
-                //}
-            }
+            Array.Sort(data);
+            Array.Reverse(data);
         }
-
+        /// <summary>
+        /// IEnumerator ist fuer foreach-Schleife in Song() 
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator GetEnumerator()
         {
-            for (Juice tmp = first; tmp != null; tmp = tmp.next)
+            for (int i = 0; i<data.Length; i++)
             {
-                yield return tmp;
+                yield return data[i];
             }
-
         }
-
-        public int GetCount() => count;
+        /// <summary>
+        /// Implementierung von ICountable-Interface
+        /// </summary>
+        /// <returns></returns>
+        public int GetCount() => data.Length;
     }
 }
